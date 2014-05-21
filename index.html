@@ -3,40 +3,55 @@
   <link rel="stylesheet" type="text/css" href="vendor/css/bootstrap.css"/>
   <link rel="stylesheet" type="text/css" href="app.css"/>
 </head>
-<body>
+<body ng-app="lookahead">
 
-  <div class="row">
-    <div class="col-md-6">
+  <ng-view></ng-view>
 
-      <h1>Add An Event</h1>
 
-      <form role="form">
-        <div class="form-group">
-          <label for="title">Title</label>
-          <input type="email" class="form-control" id="title" placeholder="e.g. Discuss next iterations plan">
-        </div>
-        <div class="form-group">
-          <label for="location">Location</label>
-          <input type="password" class="form-control" id="location" placeholder="e.g. 123 4 Street NW">
-        </div>
-        <div class="form-group">
-          <label for="startTime">Start Time</label>
-          <input type="datetime" class="form-control" id="startTime" placeholder="DD-MM-YYYY HH:MM">
-        </div>
-        <div class="form-group">
-          <label for="endTime">End Time</label>
-          <input type="datetime" class="form-control" id="endTime" placeholder="DD-MM-YYYY HH:MM">
-        </div>
-        <button type="submit" class="btn btn-default">Save</button>
-      </form>
+  <script type="text/ng-template" id="events.html">
+    <div class="row">
+      <div class="col-md-6">
 
+        <h1>Add An Event</h1>
+
+        <form role="form">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" ng-model="newEvent.title" placeholder="e.g. Discuss next iterations plan">
+          </div>
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" class="form-control" id="location" ng-model="newEvent.location" placeholder="e.g. 123 4 Street NW">
+          </div>
+          <div class="form-group">
+            <label for="startTime">Start Time</label>
+            <input type="datetime" class="form-control" id="startTime" ng-model="newEvent.startTime" placeholder="DD-MM-YYYY HH:MM">
+          </div>
+          <div class="form-group">
+            <label for="endTime">End Time</label>
+            <input type="datetime" class="form-control" id="endTime" ng-model="newEvent.endTime"  placeholder="DD-MM-YYYY HH:MM">
+          </div>
+          <button type="submit" class="btn btn-default" ng-click="addNewEvent()" ng-disabled="!newEvent.title">Save</button>
+        </form>
+
+      </div>
+      <div class="col-md-1"></div>
+      <div class="col-md-5">
+        <h2>Upcoming Events</h2>
+
+        <ol>
+          <li ng-repeat="event in events" ng-if="event.title">
+            {{event.title}}
+            <br/>
+            {{event.location}}
+            <br/>
+            {{event.startTime}} <span ng-if="event.endTime"> - </span> {{event.endTime}}
+          </li>
+        </ol>
+
+      </div>
     </div>
-    <div class="col-md-1"></div>
-    <div class="col-md-5">
-      <h2>Upcoming Events</h2>
-    </div>
-  </div>
-
+  </script>
 
 
   <script type="text/javascript" src="vendor/js/angular.js"></script>
