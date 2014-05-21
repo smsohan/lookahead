@@ -3,27 +3,52 @@ var lookahead = angular.module('lookahead', ['ngRoute']);
 
 lookahead.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
 
-  $routeProvider
-  .when('/calendar', {
-    templateUrl: 'calendar.html',
-    controller: 'CalendarController'
-  })
-  .otherwise({
-    templateUrl: 'events.html',
-    controller: 'EventsController'
+  $routeProvider.otherwise({
+    templateUrl: 'new.html',
+    controller: 'NewPostController'
   });
 
-  $locationProvider.html5Mode(true);
+  $routeProvider.when('/details/:id', {
+    templateUrl: 'details.html',
+    controller: 'PostDetailsController'
+  });
+
 }]);
 
-lookahead.controller('EventsController', ['$scope', function($scope){
-  $scope.events = [];
+lookahead.factory("postsFactory", function(){
+  return {
+    posts: []
+  };
+});
 
-  $scope.addNewEvent = function(){
-    $scope.newEvent = {};
-    $scope.events.push($scope.newEvent);
+lookahead.controller('NewPostController', ['$scope', 'postsFactory', function($scope, postsFactory){
+  $scope.posts = postsFactory.posts;;
+
+  $scope.addNewPost = function(){
+    $scope.newPost = {};
+    $scope.posts.push($scope.newPost);
   };
 
-  $scope.addNewEvent();
+  $scope.addNewPost();
 
+  $scope.isBig = function(body){
+    return body && body.length > 30;
+  };
+
+}]);
+
+lookahead.controller('PostDetailsController', ['$scope', '$routeParams', 'postsFactory', function($scope, $routeParams, postsFactory){
+  $scope.post = postsFactory.posts[$routeParams.id];
+}]);
+
+lookahead.directive('markdown', ['$compile', function($compile){
+  return{
+    restrict: 'E',
+    transclude: true,
+    templateUrl: 'markdown.html',
+
+    link: function(scope, element, attrs){
+      element.html(new Showdown.converter().makeHtml(scope.post.body));
+    }
+  }
 }]);

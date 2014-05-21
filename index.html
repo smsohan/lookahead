@@ -7,45 +7,36 @@
 
   <ng-view></ng-view>
 
-
-  <script type="text/ng-template" id="events.html">
+  <script type="text/ng-template" id="new.html">
     <div class="row">
-      <div class="col-md-6">
-
-        <h1>Add An Event</h1>
-
+      <div class="col-md-5">
         <form role="form">
           <div class="form-group">
             <label for="title">Title</label>
-            <input type="text" class="form-control" id="title" ng-model="newEvent.title" placeholder="e.g. Discuss next iterations plan">
+            <input type="text" class="form-control" id="title" ng-model="newPost.title" placeholder="...">
           </div>
           <div class="form-group">
-            <label for="location">Location</label>
-            <input type="text" class="form-control" id="location" ng-model="newEvent.location" placeholder="e.g. 123 4 Street NW">
+            <label for="body">Body</label>
+            <textarea id="body" class="form-control" ng-model="newPost.body"></textarea>
           </div>
-          <div class="form-group">
-            <label for="startTime">Start Time</label>
-            <input type="datetime" class="form-control" id="startTime" ng-model="newEvent.startTime" placeholder="DD-MM-YYYY HH:MM">
-          </div>
-          <div class="form-group">
-            <label for="endTime">End Time</label>
-            <input type="datetime" class="form-control" id="endTime" ng-model="newEvent.endTime"  placeholder="DD-MM-YYYY HH:MM">
-          </div>
-          <button type="submit" class="btn btn-default" ng-click="addNewEvent()" ng-disabled="!newEvent.title">Save</button>
+          <button type="submit" class="btn btn-default" ng-click="addNewPost()">Submit</button>
         </form>
-
       </div>
-      <div class="col-md-1"></div>
-      <div class="col-md-5">
-        <h2>Upcoming Events</h2>
+      <div class="col-md-2"></div>
 
+      <div class="col-md-5">
         <ol>
-          <li ng-repeat="event in events" ng-if="event.title">
-            {{event.title}}
-            <br/>
-            {{event.location}}
-            <br/>
-            {{event.startTime}} <span ng-if="event.endTime"> - </span> {{event.endTime}}
+          <li ng-repeat="post in posts" ng-if="post.title">
+            <h1>{{post.title}}</h1>
+            {{post.body | limitTo: 30}}
+
+            <span ng-if="isBig(post.body)">
+              ...
+            </span>
+
+            <div>
+              <a href="#/details/{{$index}}">Preview</a>
+            </div>
           </li>
         </ol>
 
@@ -53,10 +44,21 @@
     </div>
   </script>
 
+  <script type="text/ng-template" id="details.html">
+    <h1>{{post.title}}</h1>
+    <markdown></markdown>
+  </script>
+
+  <script type="text/ng-template" id="markdown.html">
+    <div class="post-body" ng-transclude>
+
+    </div>
+  </script>
 
   <script type="text/javascript" src="vendor/js/angular.js"></script>
   <script type="text/javascript" src="vendor/js/angular-route.js"></script>
   <script type="text/javascript" src="vendor/js/ui-bootstrap-0.11.0.js"></script>
+  <script type="text/javascript" src="vendor/js/showdown.js"></script>
   <script type="text/javascript" src="app.js"></script>
 </body>
 </html>
