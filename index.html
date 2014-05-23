@@ -5,55 +5,55 @@
 </head>
 <body ng-app="lookahead">
 
+  <h1>Lookahead</h1>
+
   <ng-view></ng-view>
 
-  <script type="text/ng-template" id="new.html">
+
+  <script type="text/ng-template" id="home.html">
+    <ul>
+      <li><a href="#/new-slide">Add New Slide</a></li>
+      <li ng-if="deck.slides">
+        <a href="#/show-slide/1">Present {{deck.slides.length}} Slides</a>
+      </li>
+    </ul>
+  </script>
+
+  <script type="text/ng-template" id="new-slide.html">
     <div class="row">
+
       <div class="col-md-5">
+        <h2>Add New Slide</h2>
+
         <form role="form">
           <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" class="form-control" id="title" ng-model="newPost.title" placeholder="...">
+            <textarea class="form-control" id="slide-content" placeholder="Edit Slide Content using Markdown" rows="15" ng-model="slide.markdownContent"></textarea>
           </div>
-          <div class="form-group">
-            <label for="body">Body</label>
-            <textarea id="body" class="form-control" ng-model="newPost.body"></textarea>
-          </div>
-          <button type="submit" class="btn btn-default" ng-click="addNewPost()">Submit</button>
+          <button type="submit" class="btn btn-default" ng-click="save()">Save</button>
         </form>
       </div>
-      <div class="col-md-2"></div>
 
-      <div class="col-md-5">
-        <ol>
-          <li ng-repeat="post in posts" ng-if="post.title">
-            <h1>{{post.title}}</h1>
-            {{post.body | limitTo: 30}}
-
-            <span ng-if="isBig(post.body)">
-              ...
-            </span>
-
-            <div>
-              <a href="#/details/{{$index}}">Preview</a>
-            </div>
-          </li>
-        </ol>
-
+      <div class="col-md-5 col-md-offset-2">
+        <h2>Preview</h2>
+        <div ng-bind-html="slide.htmlContent()"></div>
       </div>
     </div>
+
   </script>
 
-  <script type="text/ng-template" id="details.html">
-    <h1>{{post.title}}</h1>
-    <markdown></markdown>
+  <script type="text/ng-template" id="show-slide.html">
+    <slide>
+      <span ng-bind-html="slide.htmlContent()"></span>
+    </slide>
   </script>
 
-  <script type="text/ng-template" id="markdown.html">
-    <div class="post-body" ng-transclude>
-
-    </div>
+  <script type="text/ng-template" id="slide.html">
+    <div class="slide-body" ng-transclude tabindex="1"></div>
+    <footer>
+      <sub>Showing {{currentSlideNumber}} of {{deck.slides.length}} slides</sub>
+    </footer>
   </script>
+
 
   <script type="text/javascript" src="vendor/js/angular.js"></script>
   <script type="text/javascript" src="vendor/js/angular-route.js"></script>
