@@ -4,13 +4,11 @@
   <link rel="stylesheet" type="text/css" href="app.css"/>
 </head>
 <body ng-app="lookahead">
-
-  <h1>Lookahead</h1>
-
   <ng-view></ng-view>
 
 
   <script type="text/ng-template" id="home.html">
+    <h1>Lookahead</h1>
     <ul>
       <li><a href="#/new-slide">Add New Slide</a></li>
       <li ng-if="deck.slides">
@@ -45,16 +43,18 @@
     <slide>
       <span ng-bind-html="slide.htmlContent()"></span>
     </slide>
+    <sub><a href="#/">Home</a></sub>
   </script>
 
   <script type="text/ng-template" id="slide.html">
-    <div class="slide-body" ng-transclude tabindex="1"></div>
-    <footer>
+    <div class="slide-body" ng-transclude tabindex="-1"></div>
+    <footer class="text-center">
       <sub>Showing {{currentSlideNumber}} of {{deck.slides.length}} slides</sub>
     </footer>
   </script>
 
 
+  <script type="text/javascript" src="vendor/js/jquery-2.1.1.js"></script>
   <script type="text/javascript" src="vendor/js/angular.js"></script>
   <script type="text/javascript" src="vendor/js/angular-route.js"></script>
   <script type="text/javascript" src="vendor/js/ui-bootstrap-0.11.0.js"></script>

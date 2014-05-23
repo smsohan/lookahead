@@ -89,6 +89,8 @@ lookahead.directive('slide', function(){
 
     link: function(scope, element, attrs){
 
+      element.find('.slide-body').focus();
+
       element.bind('keydown keypress', function(event){
         if(event.keyCode == 38 || event.keyCode == 39){
           scope.showNext();
@@ -100,10 +102,7 @@ lookahead.directive('slide', function(){
       });
 
     }
-
-
   }
-
 });
 
 

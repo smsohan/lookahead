@@ -4,5 +4,6 @@ body{
 }
 
 .slide-body{
-  min-height: 90%;
+  min-height: 70%;
+  outline: none;
 }
