@@ -1,9 +1,10 @@
 body{
-  width: 90%;
+  width: 70%;
   margin: 0 auto;
 }
 
 .slide-body{
   min-height: 70%;
   outline: none;
+  font-size: 2em;
 }
