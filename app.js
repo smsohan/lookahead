@@ -1,54 +1,109 @@
 var lookahead = angular.module('lookahead', ['ngRoute']);
 
+lookahead.config(['$routeProvider', '$sceProvider', function(router, sce){
 
-lookahead.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
-
-  $routeProvider.otherwise({
-    templateUrl: 'new.html',
-    controller: 'NewPostController'
+  router.when('/', {
+    templateUrl: 'home.html',
+    controller: 'HomeController'
   });
 
-  $routeProvider.when('/details/:id', {
-    templateUrl: 'details.html',
-    controller: 'PostDetailsController'
+  router.when('/new-slide', {
+    templateUrl: 'new-slide.html',
+    controller: 'NewSlideController'
   });
 
+  router.when('/show-slide/:slide', {
+    templateUrl: 'show-slide.html',
+    controller: 'ShowSlideController'
+  });
+
+  sce.enabled(false);
 }]);
 
-lookahead.factory("postsFactory", function(){
+lookahead.factory('deck', function(){
   return {
-    posts: []
+    slides: []
   };
 });
 
-lookahead.controller('NewPostController', ['$scope', 'postsFactory', function($scope, postsFactory){
-  $scope.posts = postsFactory.posts;;
+var Slide = (function(){
 
-  $scope.addNewPost = function(){
-    $scope.newPost = {};
-    $scope.posts.push($scope.newPost);
+  var Slide = function(markdownContent){
+    this.markdownContent = markdownContent || '';
   };
 
-  $scope.addNewPost();
-
-  $scope.isBig = function(body){
-    return body && body.length > 30;
+  var markdownConverter = new Showdown.converter();
+  Slide.prototype.htmlContent = function() {
+    return markdownConverter.makeHtml(this.markdownContent);
   };
+
+  return Slide;
+})();
+
+lookahead.controller('HomeController', ['$scope', 'deck', function(controllerScope, deck){
+  controllerScope.deck = deck;
+}]);
+
+lookahead.controller('NewSlideController', ['$scope', '$sce', '$location', 'deck', function(controllerScope, htmlSafe, location, deck){
+
+  controllerScope.slide = new Slide();
+
+  controllerScope.save = function(){
+    deck.slides.push(controllerScope.slide);
+    location.path('/');
+  }
+}]);
+
+lookahead.controller('ShowSlideController', ['$scope', '$routeParams', '$location', 'deck', function(controllerScope, params, location, deck){
+  controllerScope.currentSlideNumber = parseInt(params.slide, 10);
+  controllerScope.deck = deck;
+  controllerScope.slide = deck.slides[controllerScope.currentSlideNumber - 1];
+
+  controllerScope.showNext = function(){
+    if(controllerScope.currentSlideNumber == deck.slides.length){
+      return;
+    }
+
+    controllerScope.$apply(function(){
+      location.path('/show-slide/' + (controllerScope.currentSlideNumber + 1));
+    })
+  }
+  controllerScope.showPrevious = function(){
+    if(controllerScope.currentSlideNumber == 1){
+      return;
+    }
+
+    controllerScope.$apply(function(){
+      location.path('/show-slide/' + (controllerScope.currentSlideNumber - 1));
+    })
+  }
 
 }]);
 
-lookahead.controller('PostDetailsController', ['$scope', '$routeParams', 'postsFactory', function($scope, $routeParams, postsFactory){
-  $scope.post = postsFactory.posts[$routeParams.id];
-}]);
+lookahead.directive('slide', function(){
 
-lookahead.directive('markdown', ['$compile', function($compile){
   return{
     restrict: 'E',
     transclude: true,
-    templateUrl: 'markdown.html',
+    templateUrl: 'slide.html',
 
     link: function(scope, element, attrs){
-      element.html(new Showdown.converter().makeHtml(scope.post.body));
+
+      element.bind('keydown keypress', function(event){
+        if(event.keyCode == 38 || event.keyCode == 39){
+          scope.showNext();
+        }
+
+        if(event.keyCode == 37 || event.keyCode == 40){
+          scope.showPrevious();
+        }
+      });
+
     }
+
+
   }
-}]);
+
+});
+
+
