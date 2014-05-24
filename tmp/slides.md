@@ -6,7 +6,7 @@ Agenda
 
 * Introduction
 * Model-View-Controller-Route
-* DI
+* Dependency Injection
 * Directives
 * Filters
 
